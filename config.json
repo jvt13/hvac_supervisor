@@ -1,4 +1,4 @@
-﻿{
+{
     "dashboard_url": "http://192.168.13.10/deltaweb/navigator/index.asp",
     "chrome_path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
     "tesseract_path": "C:\\Program Files\\Tesseract-OCR\\tesseract.exe",
@@ -23,9 +23,9 @@
     "identity_text_match_enabled": false,
     "config_host": "127.0.0.1",
     "config_port": 8789,
-    "automation_enabled": false,
-    "last_position_setup_date": "2026-03-30",
-    "last_dashboard_capture_at": "2026-03-30 23:05:11",
+    "automation_enabled": true,
+    "last_position_setup_date": "2026-03-31",
+    "last_dashboard_capture_at": "2026-03-31 00:09:04",
     "capture_interval_minutes": 1,
     "upload_enabled": true,
     "upload_url": "http://localhost:3000/media/api/campaigns/upload",
