@@ -677,27 +677,6 @@ def _para_data_dd_mm_yyyy(valor):
         return texto
 
 
-def calculate_upload_end_time(now_local, interval_minutes):
-    """
-    Calcula a hora final para o upload somando o intervalo à hora atual.
-    
-    Exemplos:
-    - Se agora é 23:30 e intervalo é 15 min → retorna 23:45:59
-    - Se agora é 23:32 e intervalo é 15 min → retorna 23:47:59
-    - Se agora é 23:30 e intervalo é 30 min → retorna 00:00:59 (próximo dia)
-    - Se agora é 10:30 e intervalo é 60 min → retorna 11:30:59
-    """
-    interval = max(1, int(interval_minutes))
-    
-    # Soma o intervalo em minutos à hora atual
-    end_time = now_local + timedelta(minutes=interval)
-    
-    # Define segundo e microsegundo como 59
-    end_time = end_time.replace(second=59, microsecond=0)
-    
-    return end_time
-
-
 def _detectar_mime_imagem(caminho_imagem):
     try:
         with Image.open(caminho_imagem) as img:
@@ -743,24 +722,19 @@ def enviar_midia_dashboard(caminho_imagem, config):
         raise RuntimeError(f"Campos obrigatorios do upload nao configurados: {', '.join(missing)}")
 
     mime_type = _detectar_mime_imagem(caminho)
-    now_local = datetime.now().astimezone()
+    now_utc = datetime.now(timezone.utc)
     interval_minutes = int(config.get("capture_interval_minutes", 60))
-    end_of_interval_local = calculate_upload_end_time(now_local, interval_minutes)
-    now_dt = now_local.astimezone(timezone.utc)
-    end_of_interval_dt = end_of_interval_local.astimezone(timezone.utc)
-    starts_at = now_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-    ends_at = end_of_interval_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-    campaign_name = f"dashboard_hvac_{now_dt.strftime('%H_%M')}"
+    end_of_interval_utc = now_utc + timedelta(minutes=interval_minutes)
+    end_of_interval_utc = end_of_interval_utc.replace(second=59, microsecond=0)
+    starts_at = now_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+    ends_at = end_of_interval_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+    campaign_name = str(config.get("upload_campaign_name", "dashboard_hvac")).strip() or "dashboard_hvac"
 
     headers = {"x-api-key": str(config.get("upload_api_key", "")).strip()}
     data = {
         "campaignName": campaign_name,
         "startsAt": starts_at,
         "endsAt": ends_at,
-        "startTime": starts_at,
-        "endTime": ends_at,
-        "startDate": _para_data_dd_mm_yyyy(starts_at),
-        "endDate": _para_data_dd_mm_yyyy(ends_at),
         "duration": str(config.get("upload_duration", "")).strip(),
         "name": str(config.get("upload_name", "")).strip(),
     }
@@ -769,7 +743,7 @@ def enviar_midia_dashboard(caminho_imagem, config):
         data["group"] = group
 
     with caminho.open("rb") as arquivo:
-        files = {"mediaFile": (caminho.name, arquivo, mime_type)}
+        files = {"file": (caminho.name, arquivo, mime_type)}
         resposta = requests.post(
             str(config.get("upload_url", "")).strip(),
             files=files,
@@ -1467,4 +1441,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 

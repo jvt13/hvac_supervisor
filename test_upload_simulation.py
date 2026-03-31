@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Teste de simulação de upload para a API de campanha
+Teste de simulaÃ§Ã£o de upload para a API de campanha
 """
 
 import json
@@ -24,10 +24,10 @@ test_image_path = Path("test_dashboard.png")
 print("1. Gerando imagem de teste...")
 img = Image.new('RGB', (1152, 568), color=(73, 109, 137))
 img.save(test_image_path)
-print(f"   ✓ Imagem criada: {test_image_path} ({test_image_path.stat().st_size} bytes)")
+print(f"   âœ“ Imagem criada: {test_image_path} ({test_image_path.stat().st_size} bytes)")
 print()
 
-# 3. Simular cálculo de upload_end_time
+# 3. Simular cÃ¡lculo de upload_end_time
 def calculate_upload_end_time(now_local, interval_minutes):
     """Calcula a hora final para o upload"""
     interval = max(1, int(interval_minutes))
@@ -45,7 +45,7 @@ end_of_interval_dt = end_of_interval_local.astimezone(timezone.utc)
 
 starts_at = now_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 ends_at = end_of_interval_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-campaign_name = f"dashboard_hvac_{now_dt.strftime('%H_%M')}"
+campaign_name = str(config.get("upload_campaign_name", "dashboard_hvac")).strip() or "dashboard_hvac"
 
 print(f"   Hora local atual: {now_local.strftime('%Y-%m-%d %H:%M:%S %z')}")
 print(f"   Intervalo configurado: {interval_minutes} minutos")
@@ -55,7 +55,7 @@ print()
 # 4. Extrair MIME type
 print("3. Detectando tipo de arquivo...")
 mime_type = "image/png"
-print(f"   ✓ MIME Type: {mime_type}")
+print(f"   âœ“ MIME Type: {mime_type}")
 print()
 
 # 5. Preparar headers
@@ -68,7 +68,7 @@ print(f"     x-api-key: {headers['x-api-key']}")
 print()
 
 # 6. Preparar payload
-print("5. Preparando payload da requisição...")
+print("5. Preparando payload da requisiÃ§Ã£o...")
 
 def _para_data_dd_mm_yyyy(valor):
     """Converte ISO datetime para DD-MM-YYYY"""
@@ -100,16 +100,16 @@ group = str(config.get("upload_group", "")).strip()
 if group:
     data["group"] = group
 
-print("   ✓ Payload preparado")
+print("   âœ“ Payload preparado")
 print()
 
 # 7. Exibir payload completo
 print("=" * 80)
-print("DADOS QUE SERÃO ENVIADOS PARA A API")
+print("DADOS QUE SERÃƒO ENVIADOS PARA A API")
 print("=" * 80)
 print()
 
-print("📤 REQUISIÇÃO HTTP POST")
+print("ðŸ“¤ REQUISIÃ‡ÃƒO HTTP POST")
 print("-" * 80)
 print(f"URL: {config.get('upload_url', '').strip()}")
 print()
@@ -122,57 +122,58 @@ print()
 
 print("Body (form-data multipart):")
 print()
-print("┌─ Campos de texto:")
+print("â”Œâ”€ Campos de texto:")
 for key, value in data.items():
     valor_display = str(value) if len(str(value)) < 50 else str(value)[:47] + "..."
-    print(f"│  {key}: {valor_display}")
+    print(f"â”‚  {key}: {valor_display}")
 print()
-print("├─ Arquivo:")
-print(f"│  mediaFile: {test_image_path.name} ({mime_type})")
-print(f"│  Tamanho: {test_image_path.stat().st_size} bytes")
-print("└")
+print("â”œâ”€ Arquivo:")
+print(f"â”‚  mediaFile: {test_image_path.name} ({mime_type})")
+print(f"â”‚  Tamanho: {test_image_path.stat().st_size} bytes")
+print("â””")
 print()
 
 # 8. Mostrar resumo
 print("=" * 80)
-print("📊 RESUMO DO UPLOAD")
+print("ðŸ“Š RESUMO DO UPLOAD")
 print("=" * 80)
 print()
 print(f"Tipo de Campanha: {data.get('campaignName', 'N/A')}")
 print(f"Nome da Campanha: {data.get('name', 'N/A')}")
-print(f"Duração: {data.get('duration', 'N/A')} minutos")
+print(f"DuraÃ§Ã£o: {data.get('duration', 'N/A')} minutos")
 print()
-print(f"Início (starts_at):     {data.get('startsAt', 'N/A')}")
+print(f"InÃ­cio (starts_at):     {data.get('startsAt', 'N/A')}")
 print(f"Fim (ends_at):          {data.get('endsAt', 'N/A')}")
-print(f"Data Início:            {data.get('startDate', 'N/A')}")
+print(f"Data InÃ­cio:            {data.get('startDate', 'N/A')}")
 print(f"Data Fim:               {data.get('endDate', 'N/A')}")
 print()
 
-# 9. Cálculo de intervalo
+# 9. CÃ¡lculo de intervalo
 start_dt = datetime.fromisoformat(starts_at.replace("Z", "+00:00"))
 end_dt = datetime.fromisoformat(ends_at.replace("Z", "+00:00"))
 duration_seconds = (end_dt - start_dt).total_seconds()
 duration_minutes = duration_seconds / 60
 
-print(f"⏱️  Intervalo de Cobertura:")
-print(f"  Duração total: {int(duration_minutes)} minutos ({int(duration_seconds)} segundos)")
+print(f"â±ï¸  Intervalo de Cobertura:")
+print(f"  DuraÃ§Ã£o total: {int(duration_minutes)} minutos ({int(duration_seconds)} segundos)")
 print()
 
 if group:
-    print(f"👥 Grupo: {group}")
+    print(f"ðŸ‘¥ Grupo: {group}")
 
 print()
 print("=" * 80)
-print("✓ TESTE SIMULADO COM SUCESSO")
+print("âœ“ TESTE SIMULADO COM SUCESSO")
 print("=" * 80)
 print()
-print("📝 Observações:")
-print("  • mediaFile é enviado como arquivo binário (multipart/form-data)")
-print("  • Os timestamps estão em UTC (Z = Zulu/UTC)")
-print("  • O intervalo de 'ends_at' é calculado dinamicamente baseado em 'capture_interval_minutes'")
-print("  • API receberá uma imagem real quando 'upload_enabled' for 'true'")
+print("ðŸ“ ObservaÃ§Ãµes:")
+print("  â€¢ mediaFile Ã© enviado como arquivo binÃ¡rio (multipart/form-data)")
+print("  â€¢ Os timestamps estÃ£o em UTC (Z = Zulu/UTC)")
+print("  â€¢ O intervalo de 'ends_at' Ã© calculado dinamicamente baseado em 'capture_interval_minutes'")
+print("  â€¢ API receberÃ¡ uma imagem real quando 'upload_enabled' for 'true'")
 print()
 
 # Limpar arquivo de teste
 test_image_path.unlink()
-print("✓ Arquivo de teste removido")
+print("âœ“ Arquivo de teste removido")
+
