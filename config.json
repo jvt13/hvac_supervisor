@@ -23,7 +23,7 @@
     "identity_text_match_enabled": false,
     "config_host": "127.0.0.1",
     "config_port": 8789,
-    "automation_enabled": true,
+    "automation_enabled": false,
     "last_position_setup_date": "2026-03-31",
     "last_dashboard_capture_at": "2026-03-31 00:09:04",
     "capture_interval_minutes": 1,
@@ -34,7 +34,7 @@
     "upload_campaign_name": "dashboard_hvac",
     "upload_duration": "10",
     "upload_name": "dashboard",
-    "upload_group": "",
+    "upload_group": "Operações",
     "auth_username": "admin",
     "auth_password_hash": "a04d483f9c2a121afdeb124b289e51795aecb21a09b2b6aa4673ae48d036760e",
     "auth_password_salt": "683121a74db7db345cea5e2f220c4bc2"
